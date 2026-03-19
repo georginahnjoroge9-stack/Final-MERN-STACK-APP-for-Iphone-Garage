@@ -32,7 +32,7 @@ const Products = () => {
       <div className="container">
         <h1 className="page-title">All Products</h1>
 
-        {/* 🔍 SEARCH */}
+        {/* SEARCH */}
         <input
           className="search-input"
           placeholder="Search iPhones..."
@@ -40,7 +40,7 @@ const Products = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* 🏷 FILTER */}
+        {/* FILTER */}
         <select
           className="filter-select"
           value={brand}
@@ -51,7 +51,7 @@ const Products = () => {
           <option value="Samsung">Samsung</option>
         </select>
 
-        {/* 📦 PRODUCTS GRID */}
+        {/* PRODUCTS GRID */}
         <div className="products">
           {filteredProducts.length === 0 ? (
             <h2>No products found</h2>

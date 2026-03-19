@@ -5,17 +5,17 @@ import { Navigate } from "react-router-dom";
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
 
-  // 🚫 Not logged in
+  // If Not logged in
   if (!user) {
     return <Navigate to="/login" />;
   }
 
-  // 🚫 Not admin
+  // If Not admin
   if (!user.isAdmin) {
     return <Navigate to="/" />;
   }
 
-  // ✅ Allowed
+  // Allowed Users
   return children;
 };
 
