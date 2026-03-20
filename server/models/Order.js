@@ -1,16 +1,13 @@
 // order model for customer purchases
-const mongoose= require('mongoose');
+import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    products: [{
-        product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product'},
-quantity: { type: Number, default: 1 },
-    }],
-    totalPrice: { type: Number, required: true },
-    status:{type:String, default :'Pending'},
-    }, {timestamps:true});
-    
-    
-    module.exports= mongoose.model('Order', orderSchema);
-    
+const orderSchema = mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    orderItems: Array,
+    totalPrice: Number,
+  },
+  { timestamps: true },
+);
+
+export default mongoose.model("Order", orderSchema);

@@ -1,15 +1,10 @@
-const express = require('express');
-const {createOrder,getUserOrders,getAllOrders} = require('../controllers/orderController');
-const {protect,admin} = require('../middleware/authMiddleware');
-
+import express from "express";
+import { createOrder, getOrders } from "../controllers/orderController.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+router.post("/", protect, createOrder);
+router.get("/", protect, admin, getOrders);
 
-//order routes with auth middleware
-router.post('/', protect, createOrder);
-router.get('/myorders', protect, getUserOrders);
-router.get('/', protect, admin, getAllOrders);
-
-
-module.exports = router;
+export default router;

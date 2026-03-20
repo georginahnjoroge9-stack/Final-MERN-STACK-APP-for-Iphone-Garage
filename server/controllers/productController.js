@@ -1,71 +1,86 @@
 //product CRUD for admin
-const Product = require("../models/Product");
-const multer = require("multer");
-const path = require("path");
+import Product from "../models/productModel.js";
 
-//multer configuration for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + path.extname(file.originalname)),
-});
+//  GET ALL PRODUCTS (WITH SEARCH)
+export const getProducts = async (req, res) => {
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: "i",
+        },
+      }
+    : {};
 
-const upload = multer({ storage }).single("image");
+  const products = await Product.find({ ...keyword });
 
-//add product -admin
-exports.addProduct = [
-  upload,
-  async (req, res) => {
-    const { name, brand, price, Storage, condition, stock } = req.body;
-    try {
-      const product = new Product({
-        name,
-        brand,
-        price,
-        Storage,
-        condition,
-        stock,
-        image: req.file ? `/uploads/${req.file.filename}` : null,
-      });
-      await product.save();
-      res.status(201).json(product);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  },
-];
-
-//get all products
-exports.getProducts = async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  res.json(products);
 };
 
-//update product-admin
-exports.updateProduct = async (req, res) => {
-  try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+//  GET PRODUCT BY ID (DETAIL PAGE)
+export const getProductById = async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
     res.json(product);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } else {
+    res.status(404);
+    throw new Error("Product not found");
   }
 };
 
+//  CREATE PRODUCT (ADMIN)
+export const createProduct = async (req, res) => {
+  const { name, price, image, brand, storage, condition, countInStock } =
+    req.body;
 
-//delete products-admin
-exports.deleteProduct = async (req, res) => {
-    try {
-        await Product.findByIdAndDelete(req.params.id);
-        res.json({ message: "Product deleted" });
-    }catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  const product = new Product({
+    name,
+    price,
+    image,
+    brand,
+    storage,
+    condition,
+    countInStock,
+    user: req.user._id,
+  });
+
+  const createdProduct = await product.save();
+
+  res.status(201).json(createdProduct);
 };
 
+// UPDATE PRODUCT (ADMIN)
+export const updateProduct = async (req, res) => {
+  const product = await Product.findById(req.params.id);
 
+  if (product) {
+    product.name = req.body.name || product.name;
+    product.price = req.body.price || product.price;
+    product.image = req.body.image || product.image;
+    product.brand = req.body.brand || product.brand;
+    product.storage = req.body.storage || product.storage;
+    product.condition = req.body.condition || product.condition;
+    product.countInStock = req.body.countInStock || product.countInStock;
+
+    const updatedProduct = await product.save();
+
+    res.json(updatedProduct);
+  } else {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+};
+
+//  DELETE PRODUCT (ADMIN)
+export const deleteProduct = async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    await product.deleteOne();
+    res.json({ message: "Product removed" });
+  } else {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+};

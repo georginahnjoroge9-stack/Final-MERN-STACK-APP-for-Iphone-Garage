@@ -1,54 +1,38 @@
-// Force Node.js to use reliable public DNS servers (Cloudflare + Google)
-const dns = require('node:dns/promises');
-dns.setServers(['1.1.1.1', '1.0.0.1', '8.8.8.8']);
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import connectDB from "./config/db.js";
 
-
-
-
-
-//entry point for the express server
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
-
-const authRoutes =require('./routes/authRoutes');
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
+import userRoutes from "./routes/userRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config();
 
+connectDB()
+
 const app = express();
+
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// ROUTES
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
-console.log("Checking URI:", process.env.MONGO_URI);
+app.use(notFound)
+app.use(errorHandler)
 
-//connection to mongodb
-mongoose.connect(process.env.MONGO_URI,)
-.then(() =>{ 
-    console.log('Connected to MongoDB');
+app.get("/", (req, res) => {
+  res.send("API Running...");
+});
+
+// DB CONNECT
+const PORT = process.env.PORT || 5000
+
+app.listen(PORT,() => {
+  console.log('Server running on port ${Port}')
 })
-.catch((err) => {
-     console.error("MongoDB Connection Error:",err);
-});
-
-//Routes for the API
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-
-
-
-
-
-
