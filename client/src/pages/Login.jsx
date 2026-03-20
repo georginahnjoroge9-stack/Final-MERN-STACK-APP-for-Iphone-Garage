@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import Layout from "../components/Layout";
 
 const Login = () => {
   const { login } = useAuth();
@@ -14,23 +15,28 @@ const Login = () => {
   };
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
+    <Layout>
+      <div className="form-container">
+        <h2>Login</h2>
 
-      <form onSubmit={submit}>
-        <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button>Login</button>
-      </form>
+        <form onSubmit={submit}>
+          <input
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button>Login</button>
+        </form>
 
-      <p>
-        Don't have an account? <Link to="/register">Register</Link>
-      </p>
-    </div>
+        <p>
+          Don't have an account? <Link to="/register">Register</Link>
+        </p>
+      </div>
+    </Layout>
   );
 };
 

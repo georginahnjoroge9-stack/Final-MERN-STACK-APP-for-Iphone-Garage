@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import Layout from "../components/Layout";
 
 const Register = () => {
   const { register } = useAuth();
@@ -14,20 +15,25 @@ const Register = () => {
   };
 
   return (
-    <div className="form-container">
-      <h2>Register</h2>
+    <Layout>
+      <div className="form-container">
+        <h2>Register</h2>
 
-      <form onSubmit={submit}>
-        <input placeholder="Name" onChange={(e) => setName(e.target.value)} />
-        <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button>Register</button>
-      </form>
-    </div>
+        <form onSubmit={submit}>
+          <input placeholder="Name" onChange={(e) => setName(e.target.value)} />
+          <input
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button>Register</button>
+        </form>
+      </div>
+    </Layout>
   );
 };
 
